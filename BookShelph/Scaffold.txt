@@ -1,0 +1,1 @@
+Scaffold-DbContext -Connection "Server=(local)\SQLEXPRESS;Database=BookShelf_db;Trusted_Connection=True;MultipleActiveResultSets=true" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context BookShelphDbContext -force
