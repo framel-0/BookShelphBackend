@@ -15,6 +15,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
+        private string uploadImagePath = "uploads/narrator/images";
 
 
         public NarratorsController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
@@ -60,13 +61,14 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Image,FirstName,LastName,OtherName,GenderId,EmailAddress,PhoneNumber,HouseAddress,IsActive")] NarratorCreateViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,ExistingImage,ImageFile,FirstName,LastName,OtherName,GenderId,EmailAddress,PhoneNumber,HouseAddress,IsActive")] NarratorCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 Narrator narrator = _mapper.Map<Narrator>(viewModel);
 
-                narrator.ImagePath = _fileUpload.SaveFile(viewModel.Image, "uploads/narrator/images");
+                var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                narrator.Image = result.UniqueFileName;
 
                 _context.Add(narrator);
 
@@ -102,7 +104,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Image,FirstName,LastName,OtherName,GenderId,EmailAddress,PhoneNumber,HouseAddress,IsActive")] NarratorEditViewModel viewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,ImageFile,FirstName,LastName,OtherName,GenderId,EmailAddress,PhoneNumber,HouseAddress,IsActive")] NarratorEditViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -114,6 +116,14 @@ namespace BookShelph.Controllers
                 try
                 {
                     Narrator narrator = _mapper.Map<Narrator>(viewModel);
+
+                    if (viewModel.ImageFile != null)
+                    {
+                        _fileUpload.DeleteFile(viewModel.ExistingImage, uploadImagePath);
+
+                        var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                        narrator.Image = result.UniqueFileName;
+                    }
 
                     _context.Update(narrator);
                     await _context.SaveChangesAsync();

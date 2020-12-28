@@ -15,6 +15,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
+        private string uploadImagePath = "uploads/author/images";
 
         public AuthorsController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -59,12 +60,14 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,MiddleName,GenderId,Address,Email,PhoneNumber")] AuthorCreateViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,ExistingImage,ImageFile,FirstName,LastName,MiddleName,GenderId,Address,Email,PhoneNumber")] AuthorCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 Author author = _mapper.Map<Author>(viewModel);
-                author.ImagePath = _fileUpload.SaveFile(viewModel.Image, "uploads/author/images");
+
+                var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                author.Image = result.UniqueFileName;
 
                 _context.Add(author);
                 await _context.SaveChangesAsync();
@@ -101,7 +104,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,FirstName,LastName,MiddleName,GenderId,Address,Email,PhoneNumber,IsActive")] AuthorEditViewModel viewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,ImageFile,FirstName,LastName,MiddleName,GenderId,Address,Email,PhoneNumber,IsActive")] AuthorEditViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -113,6 +116,15 @@ namespace BookShelph.Controllers
                 try
                 {
                     Author author = _mapper.Map<Author>(viewModel);
+
+                    if (viewModel.ImageFile != null)
+                    {
+                        _fileUpload.DeleteFile(viewModel.ExistingImage, uploadImagePath);
+
+                        var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                        author.Image = result.UniqueFileName;
+                    }
+
                     _context.Update(author);
                     await _context.SaveChangesAsync();
                 }

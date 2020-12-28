@@ -14,6 +14,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
+        private string uploadImagePath = "uploads/language/images";
 
         public LanguagesController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -49,9 +50,9 @@ namespace BookShelph.Controllers
         // GET: Languages/Create
         public IActionResult Create()
         {
-            //return View();
-            LanguageCreateViewModel viewModel = new LanguageCreateViewModel();
-            return PartialView("_CreatePartial", viewModel);
+            return View();
+            //LanguageCreateViewModel viewModel = new LanguageCreateViewModel();
+            //return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: Languages/Create
@@ -59,12 +60,15 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,IsActive")] LanguageCreateViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,ImageFile,Name,Description,IsActive")] LanguageCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 Language language = _mapper.Map<Language>(viewModel);
-                language.ImagePath = _fileUpload.SaveFile(viewModel.Image, "uploads/language/images");
+
+                var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                language.Image = result.UniqueFileName;
+
                 _context.Add(language);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -97,7 +101,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,IsActive")] LanguageEditViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ExistingImage,ImageFile,Name,Description,IsActive")] LanguageEditViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -109,6 +113,14 @@ namespace BookShelph.Controllers
                 try
                 {
                     Language language = _mapper.Map<Language>(viewModel);
+
+                    if (viewModel.ImageFile != null)
+                    {
+                        _fileUpload.DeleteFile(viewModel.ExistingImage, uploadImagePath);
+
+                        var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                        language.Image = result.UniqueFileName;
+                    }
 
                     _context.Update(language);
                     await _context.SaveChangesAsync();

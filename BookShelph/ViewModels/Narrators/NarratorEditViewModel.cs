@@ -9,8 +9,11 @@ namespace BookShelph.ViewModels.Narrators
 
         public long Id { get; set; }
 
+        public string ExistingImage { get; set; }
+
+
         [DataType(DataType.Upload)]
-        public IFormFile Image { get; set; }
+        public IFormFile ImageFile { get; set; }
 
         [Required]
         [StringLength(50, ErrorMessage = "First Name cannot be longer than 50 characters.")]

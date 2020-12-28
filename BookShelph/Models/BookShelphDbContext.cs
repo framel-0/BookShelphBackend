@@ -49,7 +49,11 @@ namespace BookShelph.Models
 
                 entity.Property(e => e.Description).HasMaxLength(450);
 
-                entity.Property(e => e.FileSize).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.FilePath).IsRequired();
+
+                entity.Property(e => e.FileSize).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.ModifiedAt).HasColumnName("Modified_At");
 
@@ -58,8 +62,6 @@ namespace BookShelph.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(150);
-
-                entity.Property(e => e.NormalizedName).HasMaxLength(150);
             });
 
             modelBuilder.Entity<Author>(entity =>

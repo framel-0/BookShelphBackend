@@ -8,7 +8,7 @@ namespace BookShelph.Models
     public partial class Book
     {
         public long Id { get; set; }
-        public string CoverImagePath { get; set; }
+        public string CoverImage { get; set; }
         public string Title { get; set; }
         public string Summary { get; set; }
         public DateTime? ReleaseDate { get; set; }

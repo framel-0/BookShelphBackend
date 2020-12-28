@@ -7,13 +7,15 @@ namespace BookShelph.ViewModels.Books
     public class BookCreateViewModel
     {
         [DataType(DataType.Upload)]
-        public IFormFile CoverImage { get; set; }
+        public IFormFile CoverImageFile { get; set; }
 
         [Required]
         public string Title { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string Summary { get; set; }
 
+        [DataType(DataType.Date)]
         [Display(Name = "Release Date")]
         public DateTime? ReleaseDate { get; set; }
 

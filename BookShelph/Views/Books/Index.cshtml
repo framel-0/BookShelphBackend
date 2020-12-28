@@ -58,7 +58,7 @@
                 {
                     <tr>
                         <td>
-                            <img src="@Url.Content("~/uploads/book/images/" + (item.CoverImagePath ?? "book_shelph.jpg"))" width="200" />
+                            <img src="@Url.Content("~/uploads/book/images/" + (item.CoverImage ?? "book_shelph.jpg"))" width="200" />
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Title)

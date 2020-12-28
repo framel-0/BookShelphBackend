@@ -12,6 +12,20 @@
         <form enctype="multipart/form-data" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ExistingImage" />
+            <div class="form-group m-form__group">
+                <label asp-for="ImageFile" class="control-label">
+                </label>
+                <div></div>
+                <div class="custom-file">
+                    <input asp-for="ImageFile" type="file" class="form-control custom-file-input" id="image">
+                    <label class="custom-file-label" for="customFile">
+                        Choose Image
+                    </label>
+                </div>
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />

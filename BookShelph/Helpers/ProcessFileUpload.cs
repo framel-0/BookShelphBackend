@@ -8,7 +8,8 @@ namespace BookShelph.Helpers
 
     public interface IProcessFileUpload
     {
-        string SaveFile(IFormFile file, string path);
+        FileResult SaveFile(IFormFile file, string path);
+        void DeleteFile(string fileName, string path);
     }
     public class ProcessFileUpload : IProcessFileUpload
     {
@@ -19,9 +20,26 @@ namespace BookShelph.Helpers
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public string SaveFile(IFormFile file, string path)
+        public void DeleteFile(string fileName, string path)
+        {
+
+            if (fileName != null)
+            {
+                string filePath = Path.Combine(_hostingEnvironment.WebRootPath, path, fileName);
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+
+        }
+
+        public FileResult SaveFile(IFormFile file, string path)
         {
             string uniqueFileName = null;
+            string resultFileName = null;
+            decimal size = 0;
             if (file != null)
             {
                 string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, path);
@@ -33,10 +51,12 @@ namespace BookShelph.Helpers
 
 
                 string fileName = file.FileName;
-                string result = Path.GetFileName(fileName);
+                resultFileName = Path.GetFileName(fileName);
+                long fileSize = file.Length;
+                size = fileSize / 1000000;
                 //string base64Guid = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + result;
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + resultFileName;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
@@ -47,7 +67,19 @@ namespace BookShelph.Helpers
 
             }
 
-            return uniqueFileName;
+            return new FileResult
+            {
+                UniqueFileName = uniqueFileName,
+                FileName = resultFileName,
+                FileSize = size,
+            };
         }
+
+    }
+    public class FileResult
+    {
+        public string UniqueFileName { get; set; }
+        public string FileName { get; set; }
+        public decimal FileSize { get; set; }
     }
 }

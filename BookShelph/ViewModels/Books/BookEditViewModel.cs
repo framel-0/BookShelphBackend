@@ -4,18 +4,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookShelph.ViewModels.Books
 {
-    public class BookEditViewModel
+    public class BookEditViewModel : EditViewModelBase
     {
         public long Id { get; set; }
+        public string ExistingCoverImage { get; set; }
 
         [DataType(DataType.Upload)]
-        public IFormFile CoverImage { get; set; }
+        public IFormFile CoverImageFile { get; set; }
 
         [Required]
         public string Title { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string Summary { get; set; }
 
+        [DataType(DataType.Date)]
         [Display(Name = "Release Date")]
         public DateTime? ReleaseDate { get; set; }
 

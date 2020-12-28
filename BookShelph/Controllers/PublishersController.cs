@@ -14,6 +14,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
+        private string uploadImagePath = "uploads/publisher/images";
 
         public PublishersController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -57,12 +58,14 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,IsActive")] PublisherCreateViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,ExistingImage,ImageFile,Name,Description,IsActive")] PublisherCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 Publisher publisher = _mapper.Map<Publisher>(viewModel);
-                publisher.ImagePath = _fileUpload.SaveFile(viewModel.Image, "uploads/publisher/images");
+
+                var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                publisher.Image = result.UniqueFileName;
 
                 _context.Add(publisher);
                 await _context.SaveChangesAsync();
@@ -95,7 +98,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Name,Description,IsActive")] PublisherEditViewModel viewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,ImageFile,Name,Description,IsActive")] PublisherEditViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -107,6 +110,14 @@ namespace BookShelph.Controllers
                 try
                 {
                     Publisher publisher = _mapper.Map<Publisher>(viewModel);
+
+                    if (viewModel.ImageFile != null)
+                    {
+                        _fileUpload.DeleteFile(viewModel.ExistingImage, uploadImagePath);
+
+                        var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                        publisher.Image = result.UniqueFileName;
+                    }
 
                     _context.Update(publisher);
                     await _context.SaveChangesAsync();

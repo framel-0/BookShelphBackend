@@ -1,5 +1,7 @@
-﻿using BookShelph.Helpers;
+﻿using AutoMapper;
+using BookShelph.Helpers;
 using BookShelph.Models;
+using BookShelph.ViewModels.Books;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,11 +13,14 @@ namespace BookShelph.Controllers
     public class BooksController : Controller
     {
         private readonly BookShelphDbContext _context;
+        private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
+        private string uploadImagePath = "uploads/books/images";
 
-        public BooksController(BookShelphDbContext context, IProcessFileUpload fileUpload)
+        public BooksController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
             _context = context;
+            _mapper = mapper;
             _fileUpload = fileUpload;
         }
 
@@ -59,11 +64,25 @@ namespace BookShelph.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
+            var authors = _context.Authors.Select(s =>
+            new
+            {
+                Id = s.Id,
+                FullName = string.Format("{0} {1}", s.FirstName, s.LastName)
+            });
+
+            var narrators = _context.Narrators.Select(s =>
+            new
+            {
+                Id = s.Id,
+                FullName = string.Format("{0} {1}", s.FirstName, s.LastName)
+            });
+
             ViewData["AudioId"] = new SelectList(_context.AudioFiles, "Id", "Name");
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "FirstName");
+            ViewData["AuthorId"] = new SelectList(authors, "Id", "FullName");
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
-            ViewData["NarratorId"] = new SelectList(_context.Narrators, "Id", "FirstName");
+            ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
             return View();
         }
@@ -73,21 +92,40 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CoverImagePath,Title,Description,ReleaseDate,CategoryId,PublisherId,AuthorId,LanguageId,NarratorId,AudioId")] Book book)
+        public async Task<IActionResult> Create([Bind("Id,ExistingCoverImage,CoverImageFile,Title,Description,ReleaseDate,CategoryId,PublisherId,AuthorId,LanguageId,NarratorId,AudioId")] BookCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                Book book = _mapper.Map<Book>(viewModel);
+
+                var result = _fileUpload.SaveFile(viewModel.CoverImageFile, uploadImagePath);
+                book.CoverImage = result.FileName;
+
                 _context.Add(book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AudioId"] = new SelectList(_context.AudioFiles, "Id", "Name", book.AudioId);
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "FirstName", book.AuthorId);
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", book.CategoryId);
-            ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name", book.LanguageId);
-            ViewData["NarratorId"] = new SelectList(_context.Narrators, "Id", "FirstName", book.NarratorId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name", book.PublisherId);
-            return View(book);
+            var authors = _context.Authors.Select(s =>
+           new
+           {
+               Id = s.Id,
+               FullName = string.Format("{0} {1}", s.FirstName, s.LastName)
+           });
+
+            var narrators = _context.Narrators.Select(s =>
+            new
+            {
+                Id = s.Id,
+                FullName = string.Format("{0} {1}", s.FirstName, s.LastName)
+            });
+
+            ViewData["AudioId"] = new SelectList(_context.AudioFiles, "Id", "Name");
+            ViewData["AuthorId"] = new SelectList(authors, "Id", "FullName");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
+            ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
+            return View(viewModel);
         }
 
         // GET: Books/Edit/5
@@ -103,13 +141,29 @@ namespace BookShelph.Controllers
             {
                 return NotFound();
             }
-            ViewData["AudioId"] = new SelectList(_context.AudioFiles, "Id", "Name", book.AudioId);
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "FirstName", book.AuthorId);
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", book.CategoryId);
-            ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name", book.LanguageId);
-            ViewData["NarratorId"] = new SelectList(_context.Narrators, "Id", "FirstName", book.NarratorId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name", book.PublisherId);
-            return View(book);
+
+            BookEditViewModel viewModel = _mapper.Map<BookEditViewModel>(book);
+            var authors = _context.Authors.Select(s =>
+           new
+           {
+               Id = s.Id,
+               FullName = string.Format("{0} {1}", s.FirstName, s.LastName)
+           });
+
+            var narrators = _context.Narrators.Select(s =>
+            new
+            {
+                Id = s.Id,
+                FullName = string.Format("{0} {1}", s.FirstName, s.LastName)
+            });
+
+            ViewData["AudioId"] = new SelectList(_context.AudioFiles, "Id", "Name");
+            ViewData["AuthorId"] = new SelectList(authors, "Id", "FullName");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
+            ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
+            return View(viewModel);
         }
 
         // POST: Books/Edit/5
@@ -117,9 +171,9 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,CoverImagePath,Title,Description,ReleaseDate,CategoryId,PublisherId,AuthorId,LanguageId,NarratorId,AudioId,IsActive")] Book book)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,CoverImage,Title,Description,ReleaseDate,CategoryId,PublisherId,AuthorId,LanguageId,NarratorId,AudioId,IsActive")] BookEditViewModel viewModel)
         {
-            if (id != book.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
@@ -128,12 +182,22 @@ namespace BookShelph.Controllers
             {
                 try
                 {
+                    Book book = _mapper.Map<Book>(viewModel);
+
+                    if (viewModel.CoverImageFile != null)
+                    {
+                        _fileUpload.DeleteFile(viewModel.ExistingCoverImage, uploadImagePath);
+
+                        var result = _fileUpload.SaveFile(viewModel.CoverImageFile, uploadImagePath);
+                        book.CoverImage = result.UniqueFileName;
+                    }
+
                     _context.Update(book);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(book.Id))
+                    if (!BookExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -144,13 +208,27 @@ namespace BookShelph.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AudioId"] = new SelectList(_context.AudioFiles, "Id", "Name", book.AudioId);
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "FirstName", book.AuthorId);
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", book.CategoryId);
-            ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name", book.LanguageId);
-            ViewData["NarratorId"] = new SelectList(_context.Narrators, "Id", "FirstName", book.NarratorId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name", book.PublisherId);
-            return View(book);
+            var authors = _context.Authors.Select(s =>
+           new
+           {
+               Id = s.Id,
+               FullName = string.Format("{0} {1}", s.FirstName, s.LastName)
+           });
+
+            var narrators = _context.Narrators.Select(s =>
+            new
+            {
+                Id = s.Id,
+                FullName = string.Format("{0} {1}", s.FirstName, s.LastName)
+            });
+
+            ViewData["AudioId"] = new SelectList(_context.AudioFiles, "Id", "Name");
+            ViewData["AuthorId"] = new SelectList(authors, "Id", "FullName");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
+            ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
+            return View(viewModel);
         }
 
         // GET: Books/Delete/5

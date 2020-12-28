@@ -1,4 +1,5 @@
-﻿using BookShelph.Dtos.Authors;
+﻿using BookShelph.Dtos.AudioFiles;
+using BookShelph.Dtos.Authors;
 using BookShelph.Dtos.Category;
 using BookShelph.Dtos.Languages;
 using BookShelph.Dtos.Narrators;
@@ -20,5 +21,6 @@ namespace BookShelph.Dtos.Books
         public virtual LanguageDto Language { get; set; }
         public virtual NarratorDto Narrator { get; set; }
         public virtual PublisherDto Publisher { get; set; }
+        public virtual AudioFileDto Audio { get; set; }
     }
 }

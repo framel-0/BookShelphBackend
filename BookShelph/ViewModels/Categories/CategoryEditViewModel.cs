@@ -7,8 +7,9 @@ namespace BookShelph.ViewModels.Categories
     {
         public CategoryEditViewModel() : base() { }
         public int Id { get; set; }
-        [Required]
-        public IFormFile Image { get; set; }
+        public string ExistingImage { get; set; }
+
+        public IFormFile ImageFile { get; set; }
         [Required]
         public string Name { get; set; }
         public string Description { get; set; }

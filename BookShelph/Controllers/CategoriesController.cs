@@ -14,6 +14,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
+        private string uploadImagePath = "uploads/category/images/";
 
         public CategoriesController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -57,12 +58,15 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,IsActive")] CategoryCreateViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,ImageFile,Name,Description,IsActive")] CategoryCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 Category category = _mapper.Map<Category>(viewModel);
-                category.ImagePath = _fileUpload.SaveFile(viewModel.Image, "uploads/category/images");
+
+                var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                category.Image = result.UniqueFileName;
+
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -94,7 +98,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,IsActive")] CategoryEditViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ExistingImage,ImageFile,Name,Description,IsActive")] CategoryEditViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -106,6 +110,14 @@ namespace BookShelph.Controllers
                 try
                 {
                     Category category = _mapper.Map<Category>(viewModel);
+
+                    if (viewModel.ImageFile != null)
+                    {
+                        _fileUpload.DeleteFile(viewModel.ExistingImage, uploadImagePath);
+
+                        var result = _fileUpload.SaveFile(viewModel.ImageFile, uploadImagePath);
+                        category.Image = result.UniqueFileName;
+                    }
 
                     _context.Update(category);
                     await _context.SaveChangesAsync();

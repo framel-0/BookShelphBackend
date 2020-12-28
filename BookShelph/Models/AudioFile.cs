@@ -18,7 +18,7 @@ namespace BookShelph.Models
         public decimal FileSize { get; set; }
         public string FilePath { get; set; }
         public TimeSpan? Duration { get; set; }
-        public string NormalizedName { get; set; }
+        public bool IsActive { get; set; }
         public int? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public int? ModifiedBy { get; set; }

@@ -15,9 +15,9 @@
             </h3>
         </div>
         <div class="card-toolbar">
-            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-language" data-url="@Url.Action("Create", "Languages")">
-                Add contact
-            </button>
+            @*<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-language" data-url="@Url.Action("Create", "Languages")">
+                    Add contact
+                </button>*@
             <!--begin::Button-->
             <a asp-action="Create" class="btn btn-primary font-weight-bolder">
                 <i class="la la-plus"></i>New Record
@@ -53,10 +53,6 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Description)
                         </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IsActive)
-                        </td>
-
                         <td>
                             @Html.DisplayFor(modelItem => item.IsActive)
                         </td>
