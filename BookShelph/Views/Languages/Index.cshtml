@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<div id="create-modal-placeholder"></div>
+<div id="modal-placeholder"></div>
 
 <div class="card card-custom">
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
@@ -15,68 +15,21 @@
             </h3>
         </div>
         <div class="card-toolbar">
-            @*<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-language" data-url="@Url.Action("Create", "Languages")">
-                    Add contact
-                </button>*@
-            <!--begin::Button-->
-            <a asp-action="Create" class="btn btn-primary font-weight-bolder">
-                <i class="la la-plus"></i>New Record
-            </a>
-            <!--end::Button-->
+            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-language" data-url="@Url.Action("Create", "Languages")">
+                Add Language
+            </button>
+
         </div>
     </div>
     <div class="card-body">
-        <!--begin: Datatable-->
-        <table class="table table-separate table-head-custom table-hover table-striped" id="datatable">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Description)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.IsActive)
-                    </th>
-
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IsActive)
-                        </td>
-                        <td nowrap="nowrap">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="font-weight-bold mr-2">
-                                <i class="fas fa-edit text-warning"></i>
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="font-weight-bold mr-2">
-                                <i class="far fa-trash-alt text-danger"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <!--end: Datatable-->
+        @await Html.PartialAsync("_TablePartial", Model)
     </div>
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#datatable').DataTable({
+            $('#languages').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'

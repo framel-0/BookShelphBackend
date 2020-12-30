@@ -20,7 +20,14 @@ namespace BookShelph.Controllers
         // GET: Genders
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Genders.ToListAsync());
+            var genders = await _context.Genders.ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return PartialView("_TablePartial", genders);
+            }
+
+            return View(genders);
         }
 
         // GET: Genders/Details/5
@@ -44,7 +51,8 @@ namespace BookShelph.Controllers
         // GET: Genders/Create
         public IActionResult Create()
         {
-            return View();
+            GenderCreateViewModel viewModel = new GenderCreateViewModel();
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: Genders/Create
@@ -70,9 +78,9 @@ namespace BookShelph.Controllers
 
                 _context.Add(gender);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
-            return View(viewModel);
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // GET: Genders/Edit/5
@@ -88,7 +96,7 @@ namespace BookShelph.Controllers
             {
                 return NotFound();
             }
-            return View(gender);
+            return PartialView("_EditPartial", gender);
         }
 
         // POST: Genders/Edit/5
@@ -121,9 +129,9 @@ namespace BookShelph.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
-            return View(gender);
+            return PartialView("_EditPartial", gender);
         }
 
         // GET: Genders/Delete/5

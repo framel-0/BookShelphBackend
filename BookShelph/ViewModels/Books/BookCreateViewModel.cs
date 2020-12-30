@@ -4,8 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookShelph.ViewModels.Books
 {
-    public class BookCreateViewModel
+    public class BookCreateViewModel : CreateViewModelBase
     {
+        public BookCreateViewModel() : base() { }
+
         [DataType(DataType.Upload)]
         public IFormFile CoverImageFile { get; set; }
 

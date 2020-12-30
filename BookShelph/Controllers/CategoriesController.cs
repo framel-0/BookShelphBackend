@@ -26,7 +26,14 @@ namespace BookShelph.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            var categories = await _context.Categories.ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return PartialView("_TablePartial", categories);
+            }
+
+            return View(categories);
         }
 
         // GET: Categories/Details/5
@@ -50,7 +57,8 @@ namespace BookShelph.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
-            return View();
+            CategoryCreateViewModel viewModel = new CategoryCreateViewModel();
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: Categories/Create
@@ -69,9 +77,10 @@ namespace BookShelph.Controllers
 
                 _context.Add(category);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
-            return View(viewModel);
+
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // GET: Categories/Edit/5
@@ -90,7 +99,7 @@ namespace BookShelph.Controllers
 
             CategoryEditViewModel viewModel = _mapper.Map<CategoryEditViewModel>(category);
 
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // POST: Categories/Edit/5
@@ -133,9 +142,10 @@ namespace BookShelph.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
-            return View(viewModel);
+
+            return PartialView("_EditPartial", viewModel);
         }
 
         // GET: Categories/Delete/5
@@ -152,6 +162,9 @@ namespace BookShelph.Controllers
             {
                 return NotFound();
             }
+
+
+            _fileUpload.DeleteFile(category.Image, uploadImagePath);
 
             return View(category);
         }

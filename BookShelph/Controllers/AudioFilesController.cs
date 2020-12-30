@@ -14,6 +14,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
+        private string uploadAudioPath = "uploads/audio_file/audios/";
 
         public AudioFilesController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -25,7 +26,14 @@ namespace BookShelph.Controllers
         // GET: AudioFiles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AudioFiles.ToListAsync());
+            var audioFiles = await _context.AudioFiles.ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return PartialView("_TablePartial", audioFiles);
+            }
+
+            return View(audioFiles);
         }
 
         // GET: AudioFiles/Details/5
@@ -49,7 +57,8 @@ namespace BookShelph.Controllers
         // GET: AudioFiles/Create
         public IActionResult Create()
         {
-            return View();
+            AudioFileCreateViewModel viewModel = new AudioFileCreateViewModel();
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: AudioFiles/Create
@@ -57,21 +66,21 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Audio,Description,Duration,")] AudioFileCreateViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,AudioFile,Description,Duration")] AudioFileCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 AudioFile audioFile = _mapper.Map<AudioFile>(viewModel);
-                var result = _fileUpload.SaveFile(viewModel.Audio, "uploads/audio_file/audios");
+                var result = _fileUpload.SaveFile(viewModel.AudioFile, uploadAudioPath);
                 audioFile.Name = result.FileName;
                 audioFile.FileSize = result.FileSize;
                 audioFile.FilePath = result.UniqueFileName;
 
                 _context.Add(audioFile);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
-            return View(viewModel);
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // GET: AudioFiles/Edit/5
@@ -139,6 +148,8 @@ namespace BookShelph.Controllers
             {
                 return NotFound();
             }
+
+            _fileUpload.DeleteFile(audioFile.FilePath, uploadAudioPath);
 
             return View(audioFile);
         }

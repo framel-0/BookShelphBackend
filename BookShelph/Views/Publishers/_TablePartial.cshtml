@@ -1,0 +1,49 @@
+﻿@model IEnumerable<BookShelph.Models.Publisher>
+<!--begin: Datatable-->
+<table class="table table-separate table-head-custom table-hover table-striped" id="publishers" data-url="@Url.Action("Index")">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td nowrap="nowrap">
+                    <button type="button" class="btn btn-transparent-warning font-weight-bold mr-2 btn-sm" data-toggle="ajax-modal" data-target="#edit-publisher" data-url="@Url.Action("Edit", "Publishers", new { id = @item.Id})">
+                        Edit
+                    </button>
+                    <button type="button" class="btn btn-transparent-danger font-weight-bold mr-2 btn-sm" data-toggle="ajax-modal" data-target="#delete-publisher" data-url="@Url.Action("Delete", "Publishers", new { id = @item.Id})">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!--end: Datatable-->

@@ -11,6 +11,7 @@ namespace BookShelph.Models
         {
             Authors = new HashSet<Author>();
             Narrators = new HashSet<Narrator>();
+            Users = new HashSet<User>();
         }
 
         public short Id { get; set; }
@@ -24,5 +25,6 @@ namespace BookShelph.Models
 
         public virtual ICollection<Author> Authors { get; set; }
         public virtual ICollection<Narrator> Narrators { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

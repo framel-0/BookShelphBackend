@@ -9,7 +9,7 @@ namespace BookShelph.ViewModels.AudioFiles
 
         [Required]
         [DataType(DataType.Upload)]
-        public IFormFile Audio { get; set; }
+        public IFormFile AudioFile { get; set; }
 
         public string Description { get; set; }
     }

@@ -1,0 +1,74 @@
+﻿@model IEnumerable<BookShelph.Models.Book>
+<!--begin: Datatable-->
+<table class="table table-separate table-head-custom table-hover table-striped" id="books" data-url="@Url.Action("Index")">
+    <thead>
+        <tr>
+            <th>
+                Cover Image
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Audio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Narrator)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Publisher)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="@Url.Content("~/uploads/book/images/" + (item.CoverImage ?? "book_shelph.jpg"))" width="200" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Audio.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Language.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author.FirstName) @Html.DisplayFor(modelItem => item.Author.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Narrator.FirstName) @Html.DisplayFor(modelItem => item.Narrator.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Publisher.Name)
+                </td>
+                <td nowrap="nowrap">
+                    <button type="button" class="btn btn-transparent-warning font-weight-bold mr-2 btn-sm" data-toggle="ajax-modal" data-target="#edit-book" data-url="@Url.Action("Edit", "Books", new { id = @item.Id})">
+                        Edit
+                    </button>
+                    <button type="button" class="btn btn-transparent-danger font-weight-bold mr-2 btn-sm" data-toggle="ajax-modal" data-target="#delete-book" data-url="@Url.Action("Delete", "Books", new { id = @item.Id})">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!--end: Datatable-->

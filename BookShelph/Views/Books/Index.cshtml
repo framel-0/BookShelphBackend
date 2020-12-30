@@ -4,6 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
+<div id="modal-placeholder"></div>
+
 <div class="card card-custom">
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
         <div class="card-title">
@@ -15,93 +17,21 @@
         <div class="card-toolbar">
 
             <!--begin::Button-->
-            <a asp-action="Create" class="btn btn-primary font-weight-bolder">
-                <i class="la la-plus"></i>New Record
-            </a>
+            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-book" data-url="@Url.Action("Create", "Books")">
+                Add Book
+            </button>
             <!--end::Button-->
         </div>
     </div>
     <div class="card-body">
-        <!--begin: Datatable-->
-        <table class="table table-separate table-head-custom table-hover table-striped" id="datatable">
-            <thead>
-                <tr>
-                    <th>
-                        Cover Image
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Title)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Audio)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Author)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Category)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Language)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Narrator)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Publisher)
-                    </th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            <img src="@Url.Content("~/uploads/book/images/" + (item.CoverImage ?? "book_shelph.jpg"))" width="200" />
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Title)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Audio.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Language.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Category.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Author.FirstName) @Html.DisplayFor(modelItem => item.Author.LastName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Narrator.FirstName) @Html.DisplayFor(modelItem => item.Narrator.LastName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Publisher.Name)
-                        </td>
-                        <td nowrap="nowrap">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="font-weight-bold mr-2">
-                                <i class="fas fa-edit text-warning"></i>
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="font-weight-bold mr-2">
-                                <i class="far fa-trash-alt text-danger"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <!--end: Datatable-->
+        @await Html.PartialAsync("_TablePartial", Model)
     </div>
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#datatable').DataTable({
+            $('#books').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'

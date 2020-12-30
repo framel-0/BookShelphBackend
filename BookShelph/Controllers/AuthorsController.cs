@@ -15,7 +15,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
-        private string uploadImagePath = "uploads/author/images";
+        private string uploadImagePath = "uploads/author/images/";
 
         public AuthorsController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -27,7 +27,14 @@ namespace BookShelph.Controllers
         // GET: Authors
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Authors.ToListAsync());
+            var authors = await _context.Authors.ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return PartialView("_TablePartial", authors);
+            }
+
+            return View(authors);
         }
 
         // GET: Authors/Details/5
@@ -52,7 +59,8 @@ namespace BookShelph.Controllers
         public IActionResult Create()
         {
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
-            return View();
+            AuthorCreateViewModel viewModel = new AuthorCreateViewModel();
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: Authors/Create
@@ -60,7 +68,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ExistingImage,ImageFile,FirstName,LastName,MiddleName,GenderId,Address,Email,PhoneNumber")] AuthorCreateViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,ExistingImage,ImageFile,FirstName,LastName,MiddleName,GenderId,EmailAddress,Email,PhoneNumber")] AuthorCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -71,11 +79,11 @@ namespace BookShelph.Controllers
 
                 _context.Add(author);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
 
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
-            return View(viewModel);
+            return PartialView("_CreatePartial", viewModel);
 
         }
 
@@ -96,7 +104,7 @@ namespace BookShelph.Controllers
 
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
 
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // POST: Authors/Edit/5
@@ -104,7 +112,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,ImageFile,FirstName,LastName,MiddleName,GenderId,Address,Email,PhoneNumber,IsActive")] AuthorEditViewModel viewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,ImageFile,FirstName,LastName,MiddleName,GenderId,Address,EmailAddress,PhoneNumber,IsActive")] AuthorEditViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -139,10 +147,10 @@ namespace BookShelph.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // GET: Authors/Delete/5
@@ -160,7 +168,9 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
-            return View(author);
+            _fileUpload.DeleteFile(author.Image, uploadImagePath);
+
+            return PartialView("_DeletePartial", author);
         }
 
         // POST: Authors/Delete/5

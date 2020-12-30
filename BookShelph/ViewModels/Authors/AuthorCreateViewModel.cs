@@ -7,6 +7,7 @@ namespace BookShelph.ViewModels.Authors
     {
 
         public AuthorCreateViewModel() : base() { }
+
         [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
 

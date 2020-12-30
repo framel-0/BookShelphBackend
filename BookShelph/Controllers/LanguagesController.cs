@@ -4,6 +4,7 @@ using BookShelph.Models;
 using BookShelph.ViewModels.Languages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
-        private string uploadImagePath = "uploads/language/images";
+        private string uploadImagePath = "uploads/language/images/";
 
         public LanguagesController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -26,7 +27,15 @@ namespace BookShelph.Controllers
         // GET: Languages
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Languages.ToListAsync());
+
+            var languages = await _context.Languages.ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return PartialView("_TablePartial", languages);
+            }
+
+            return View(languages);
         }
 
         // GET: Languages/Details/5
@@ -50,9 +59,9 @@ namespace BookShelph.Controllers
         // GET: Languages/Create
         public IActionResult Create()
         {
-            return View();
-            //LanguageCreateViewModel viewModel = new LanguageCreateViewModel();
-            //return PartialView("_CreatePartial", viewModel);
+            //return View();
+            LanguageCreateViewModel viewModel = new LanguageCreateViewModel();
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: Languages/Create
@@ -71,10 +80,11 @@ namespace BookShelph.Controllers
 
                 _context.Add(language);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                CreateNotification("Contact saved!");
             }
 
-            return View(viewModel);
+            //return View(viewModel);
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // GET: Languages/Edit/5
@@ -93,7 +103,7 @@ namespace BookShelph.Controllers
 
             LanguageEditViewModel viewModel = _mapper.Map<LanguageEditViewModel>(language);
 
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // POST: Languages/Edit/5
@@ -136,9 +146,9 @@ namespace BookShelph.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // GET: Languages/Delete/5
@@ -156,6 +166,8 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
+            _fileUpload.DeleteFile(language.Image, uploadImagePath);
+
             return View(language);
         }
 
@@ -168,6 +180,22 @@ namespace BookShelph.Controllers
             _context.Languages.Remove(language);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [NonAction]
+        private void CreateNotification(string message)
+        {
+            TempData.TryGetValue("Notifications", out object value);
+            var notifications = value as List<string> ?? new List<string>();
+            notifications.Add(message);
+            TempData["Notifications"] = notifications;
+        }
+
+        public IActionResult Notifications()
+        {
+            TempData.TryGetValue("Notifications", out object value);
+            var notifications = value as IEnumerable<string> ?? Enumerable.Empty<string>();
+            return PartialView("_NotificationsPartial", notifications);
         }
 
         private bool LanguageExists(int id)

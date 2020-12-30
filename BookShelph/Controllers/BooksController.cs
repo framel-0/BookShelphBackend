@@ -15,7 +15,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
-        private string uploadImagePath = "uploads/books/images";
+        private string uploadImagePath = "uploads/books/images/";
 
         public BooksController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -84,7 +84,9 @@ namespace BookShelph.Controllers
             ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
             ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
-            return View();
+
+            BookCreateViewModel viewModel = new BookCreateViewModel();
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: Books/Create
@@ -103,7 +105,7 @@ namespace BookShelph.Controllers
 
                 _context.Add(book);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
             var authors = _context.Authors.Select(s =>
            new
@@ -125,7 +127,8 @@ namespace BookShelph.Controllers
             ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
             ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
-            return View(viewModel);
+
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // GET: Books/Edit/5
@@ -163,7 +166,7 @@ namespace BookShelph.Controllers
             ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
             ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // POST: Books/Edit/5
@@ -206,7 +209,7 @@ namespace BookShelph.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
             var authors = _context.Authors.Select(s =>
            new
@@ -228,7 +231,7 @@ namespace BookShelph.Controllers
             ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
             ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // GET: Books/Delete/5
@@ -251,6 +254,8 @@ namespace BookShelph.Controllers
             {
                 return NotFound();
             }
+
+            _fileUpload.DeleteFile(book.CoverImage, uploadImagePath);
 
             return View(book);
         }

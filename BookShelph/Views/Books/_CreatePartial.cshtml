@@ -1,0 +1,78 @@
+﻿@model BookShelph.ViewModels.Books.BookCreateViewModel
+<!-- Modal-->
+<div class="modal fade" id="add-book" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">New Book</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" method="post" asp-action="Create">
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group m-form__group">
+                        <label asp-for="CoverImageFile" class="control-label">
+                        </label>
+                        <div></div>
+                        <div class="custom-file">
+                            <input asp-for="CoverImageFile" type="file" class="form-control custom-file-input" id="image">
+                            <label class="custom-file-label" for="customFile">
+                                Choose Image
+                            </label>
+                        </div>
+                        <span asp-validation-for="CoverImageFile" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Summary" class="control-label"></label>
+                        <input asp-for="Summary" class="form-control" />
+                        <span asp-validation-for="Summary" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ReleaseDate" class="control-label"></label>
+                        <input asp-for="ReleaseDate" class="form-control" />
+                        <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CategoryId" class="control-label"></label>
+                        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PublisherId" class="control-label"></label>
+                        <select asp-for="PublisherId" class="form-control" asp-items="ViewBag.PublisherId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AuthorId" class="control-label"></label>
+                        <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LanguageId" class="control-label"></label>
+                        <select asp-for="LanguageId" class="form-control" asp-items="ViewBag.LanguageId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NarratorId" class="control-label"></label>
+                        <select asp-for="NarratorId" class="form-control" asp-items="ViewBag.NarratorId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AudioId" class="control-label"></label>
+                        <select asp-for="AudioId" class="form-control" asp-items="ViewBag.AudioId"></select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-save="modal" data-content="#books">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>

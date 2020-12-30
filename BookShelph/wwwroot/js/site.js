@@ -4,31 +4,46 @@
 // Write your JavaScript code.
 
 $(function () {
+    var placeholderElement = $('#modal-placeholder');
 
-    // all buttons with data-toggle equal to ajax-modal
     $('button[data-toggle="ajax-modal"]').click(function (event) {
         var url = $(this).data('url');
-
         $.get(url).done(function (data) {
-            $('#create-modal-placeholder').html(data);
-            $('#create-modal-placeholder > .modal', data).modal('show');
-
+            placeholderElement.html(data);
+            placeholderElement.find('.modal').modal('show');
         });
-
     });
 
 
-});
+    placeholderElement.on('click', '[data-save="modal"]', function (event) {
+        event.preventDefault();
+        var content = $(this).data('content');
 
-placeholderElement.on('click', '[data-save="modal"]', function (event) {
-    event.preventDefault();
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var dataToSend = new FormData(form.get(0));
 
-    var form = $(this).parents('.modal').find('form');
-    var actionUrl = form.attr('action');
-    var dataToSend = form.serialize();
+        $.ajax({ url: actionUrl, method: 'post', data: dataToSend, processData: false, contentType: false }).done(function (data) {
+            var newBody = $('.modal-body', data);
+            placeholderElement.find('.modal-body').replaceWith(newBody);
 
-    $.post(actionUrl, dataToSend).done(function (data) {
-        placeholderElement.find('.modal').modal('hide');
+            var isValid = newBody.find('[name="IsValid"]').val() === 'True';
+            if (isValid) {
+                //var notificationsPlaceholder = $('#notification');
+                //var notificationsUrl = notificationsPlaceholder.data('url');
+                //$.get(notificationsUrl).done(function (notifications) {
+                //    notificationsPlaceholder.html(notifications);
+                //});
+
+                var tableElement = $(content);
+                var tableUrl = tableElement.data('url');
+                $.get(tableUrl).done(function (table) {
+                    tableElement.replaceWith(table);
+                });
+
+                placeholderElement.find('.modal').modal('hide');
+            }
+        });
     });
 });
 

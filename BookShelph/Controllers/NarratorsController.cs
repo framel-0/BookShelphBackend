@@ -15,7 +15,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
-        private string uploadImagePath = "uploads/narrator/images";
+        private string uploadImagePath = "uploads/narrator/images/";
 
 
         public NarratorsController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
@@ -28,7 +28,14 @@ namespace BookShelph.Controllers
         // GET: Narrators
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Narrators.ToListAsync());
+            var narrators = await _context.Narrators.ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return PartialView("_TablePartial", narrators);
+            }
+
+            return View(narrators);
         }
 
         // GET: Narrators/Details/5
@@ -53,7 +60,9 @@ namespace BookShelph.Controllers
         public IActionResult Create()
         {
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
-            return View();
+
+            NarratorCreateViewModel viewModel = new NarratorCreateViewModel();
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: Narrators/Create
@@ -73,10 +82,11 @@ namespace BookShelph.Controllers
                 _context.Add(narrator);
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
-            return View(viewModel);
+
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // GET: Narrators/Edit/5
@@ -96,7 +106,7 @@ namespace BookShelph.Controllers
             NarratorEditViewModel viewModel = _mapper.Map<NarratorEditViewModel>(narrator);
 
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // POST: Narrators/Edit/5
@@ -139,13 +149,12 @@ namespace BookShelph.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
 
 
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
 
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // GET: Narrators/Delete/5
@@ -162,6 +171,8 @@ namespace BookShelph.Controllers
             {
                 return NotFound();
             }
+
+            _fileUpload.DeleteFile(narrator.Image, uploadImagePath);
 
             return View(narrator);
         }

@@ -6,10 +6,14 @@ namespace BookShelph.ViewModels.Books
 {
     public class BookEditViewModel : EditViewModelBase
     {
+
+        public BookEditViewModel() : base() { }
+
         public long Id { get; set; }
         public string ExistingCoverImage { get; set; }
 
         [DataType(DataType.Upload)]
+        [Display(Name = "Cover Image")]
         public IFormFile CoverImageFile { get; set; }
 
         [Required]

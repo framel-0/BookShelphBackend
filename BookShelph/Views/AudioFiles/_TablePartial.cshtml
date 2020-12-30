@@ -1,0 +1,60 @@
+﻿@model IEnumerable<BookShelph.Models.AudioFile>
+<!--begin: Datatable-->
+<table class="table table-separate table-head-custom table-hover table-striped" id="audio-files" data-url="@Url.Action("Index")">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FileSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FilePath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var audioPath = "~/uploads/audio_file/audios/" + item.FilePath;
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FileSize)
+                </td>
+                <td>
+                    <audio controls>
+                        <source src="@Url.Content(@audioPath)" type="audio/mp3">
+                    </audio>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td nowrap="nowrap">
+                    <button type="button" class="btn btn-transparent-warning font-weight-bold mr-2 btn-sm" data-toggle="ajax-modal" data-target="#edit-audio" data-url="@Url.Action("Edit", "AudioFiles", new { id = @item.Id})">
+                        Edit
+                    </button>
+                    <button type="button" class="btn btn-transparent-danger font-weight-bold mr-2 btn-sm" data-toggle="ajax-modal" data-target="#delete-audio" data-url="@Url.Action("Delete", "AudioFiles", new { id = @item.Id})">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!--end: Datatable-->

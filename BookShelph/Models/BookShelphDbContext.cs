@@ -25,6 +25,7 @@ namespace BookShelph.Models
         public virtual DbSet<Language> Languages { get; set; }
         public virtual DbSet<Narrator> Narrators { get; set; }
         public virtual DbSet<Publisher> Publishers { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -277,6 +278,55 @@ namespace BookShelph.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(150);
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("User");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.CreatedAt).HasColumnName("Created_At");
+
+                entity.Property(e => e.CreatedBy).HasColumnName("Created_By");
+
+                entity.Property(e => e.Dob)
+                    .HasColumnType("date")
+                    .HasColumnName("DOB");
+
+                entity.Property(e => e.EmailAddress).HasMaxLength(150);
+
+                entity.Property(e => e.FirstName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.LastName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedAt).HasColumnName("Modified_At");
+
+                entity.Property(e => e.ModifiedBy).HasColumnName("Modified_By");
+
+                entity.Property(e => e.PasswordHash).IsRequired();
+
+                entity.Property(e => e.PasswordSalt).IsRequired();
+
+                entity.Property(e => e.PhoneNumber)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Gender)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.GenderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_User_Gender");
             });
 
             OnModelCreatingPartial(modelBuilder);

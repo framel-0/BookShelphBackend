@@ -4,6 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
+<div id="modal-placeholder"></div>
+
 <div class="card card-custom">
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
         <div class="card-title">
@@ -13,81 +15,22 @@
             </h3>
         </div>
         <div class="card-toolbar">
-
             <!--begin::Button-->
-            <a asp-action="Create" class="btn btn-primary font-weight-bolder">
-                <i class="la la-plus"></i>New Record
-            </a>
+            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-audio" data-url="@Url.Action("Create", "AudioFiles")">
+                Add Audio
+            </button>
             <!--end::Button-->
         </div>
     </div>
     <div class="card-body">
-        <!--begin: Datatable-->
-        <table class="table table-separate table-head-custom table-hover table-striped" id="datatable">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Description)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FileSize)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FilePath)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.IsActive)
-                    </th>
-
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    var audioPath = "~/uploads/audios/" + item.FilePath;
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FileSize)
-                        </td>
-                        <td>
-                            <audio controls>
-                                <source src="@Url.Content(@audioPath)" type="audio/mp3">
-                            </audio>
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IsActive)
-                        </td>
-                        <td nowrap="nowrap">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="font-weight-bold mr-2">
-                                <i class="fas fa-edit text-warning"></i>
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="font-weight-bold mr-2">
-                                <i class="far fa-trash-alt text-danger"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <!--end: Datatable-->
+        @await Html.PartialAsync("_TablePartial", Model)
     </div>
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#datatable').DataTable({
+            $('#audio-files').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'

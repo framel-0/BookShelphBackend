@@ -14,7 +14,7 @@ namespace BookShelph.Controllers
         private readonly BookShelphDbContext _context;
         private IMapper _mapper;
         private IProcessFileUpload _fileUpload;
-        private string uploadImagePath = "uploads/publisher/images";
+        private string uploadImagePath = "uploads/publisher/images/";
 
         public PublishersController(BookShelphDbContext context, IMapper mapper, IProcessFileUpload fileUpload)
         {
@@ -26,7 +26,14 @@ namespace BookShelph.Controllers
         // GET: Publishers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Publishers.ToListAsync());
+            var publishers = await _context.Publishers.ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return PartialView("_TablePartial", publishers);
+            }
+
+            return View(publishers);
         }
 
         // GET: Publishers/Details/5
@@ -50,7 +57,8 @@ namespace BookShelph.Controllers
         // GET: Publishers/Create
         public IActionResult Create()
         {
-            return View();
+            PublisherCreateViewModel viewModel = new PublisherCreateViewModel();
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // POST: Publishers/Create
@@ -69,9 +77,9 @@ namespace BookShelph.Controllers
 
                 _context.Add(publisher);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
-            return View(viewModel);
+            return PartialView("_CreatePartial", viewModel);
         }
 
         // GET: Publishers/Edit/5
@@ -90,7 +98,7 @@ namespace BookShelph.Controllers
 
             PublisherEditViewModel viewModel = _mapper.Map<PublisherEditViewModel>(publisher);
 
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // POST: Publishers/Edit/5
@@ -133,9 +141,8 @@ namespace BookShelph.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(viewModel);
+            return PartialView("_EditPartial", viewModel);
         }
 
         // GET: Publishers/Delete/5
@@ -152,6 +159,8 @@ namespace BookShelph.Controllers
             {
                 return NotFound();
             }
+
+            _fileUpload.DeleteFile(publisher.Image, uploadImagePath);
 
             return View(publisher);
         }
