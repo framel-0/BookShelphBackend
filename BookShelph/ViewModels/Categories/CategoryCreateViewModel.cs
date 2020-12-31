@@ -7,6 +7,7 @@ namespace BookShelph.ViewModels.Categories
     {
         public CategoryCreateViewModel() : base() { }
         [Required]
+        [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
         [Required]
         public string Name { get; set; }

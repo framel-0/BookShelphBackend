@@ -149,9 +149,7 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
-            _fileUpload.DeleteFile(audioFile.FilePath, uploadAudioPath);
-
-            return View(audioFile);
+            return PartialView("_DeletePartial", audioFile);
         }
 
         // POST: AudioFiles/Delete/5
@@ -160,6 +158,9 @@ namespace BookShelph.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var audioFile = await _context.AudioFiles.FindAsync(id);
+
+            _fileUpload.DeleteFile(audioFile.FilePath, uploadAudioPath);
+
             _context.AudioFiles.Remove(audioFile);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

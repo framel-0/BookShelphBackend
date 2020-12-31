@@ -1,7 +1,7 @@
 ﻿@model BookShelph.ViewModels.Books.BookCreateViewModel
 <!-- Modal-->
 <div class="modal fade" id="add-book" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
 
             <div class="modal-header">
@@ -26,46 +26,71 @@
                         </div>
                         <span asp-validation-for="CoverImageFile" class="text-danger"></span>
                     </div>
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="Title" class="control-label"></label>
+                                <input asp-for="Title" class="form-control" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="ReleaseDate" class="control-label"></label>
+                                <input asp-for="ReleaseDate" class="form-control" />
+                                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="form-group">
-                        <label asp-for="Title" class="control-label"></label>
-                        <input asp-for="Title" class="form-control" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="LanguageId" class="control-label"></label>
+                                <select asp-for="LanguageId" class="form-control" asp-items="ViewBag.LanguageId"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="CategoryId" class="control-label"></label>
+                                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="PublisherId" class="control-label"></label>
+                                <select asp-for="PublisherId" class="form-control" asp-items="ViewBag.PublisherId"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="AuthorId" class="control-label"></label>
+                                <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="NarratorId" class="control-label"></label>
+                                <select asp-for="NarratorId" class="form-control" asp-items="ViewBag.NarratorId"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="AudioId" class="control-label"></label>
+                                <select asp-for="AudioId" class="form-control" asp-items="ViewBag.AudioId"></select>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label asp-for="Summary" class="control-label"></label>
-                        <input asp-for="Summary" class="form-control" />
+                        <textarea asp-for="Summary" class="form-control" rows="3" />
                         <span asp-validation-for="Summary" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="ReleaseDate" class="control-label"></label>
-                        <input asp-for="ReleaseDate" class="form-control" />
-                        <span asp-validation-for="ReleaseDate" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="CategoryId" class="control-label"></label>
-                        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PublisherId" class="control-label"></label>
-                        <select asp-for="PublisherId" class="form-control" asp-items="ViewBag.PublisherId"></select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="AuthorId" class="control-label"></label>
-                        <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="LanguageId" class="control-label"></label>
-                        <select asp-for="LanguageId" class="form-control" asp-items="ViewBag.LanguageId"></select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="NarratorId" class="control-label"></label>
-                        <select asp-for="NarratorId" class="form-control" asp-items="ViewBag.NarratorId"></select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="AudioId" class="control-label"></label>
-                        <select asp-for="AudioId" class="form-control" asp-items="ViewBag.AudioId"></select>
-                    </div>
+
                 </form>
             </div>
             <div class="modal-footer">

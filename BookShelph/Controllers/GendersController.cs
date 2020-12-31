@@ -149,7 +149,7 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
-            return View(gender);
+            return PartialView("_DeletePartial", gender);
         }
 
         // POST: Genders/Delete/5

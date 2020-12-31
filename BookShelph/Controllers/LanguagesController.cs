@@ -59,7 +59,6 @@ namespace BookShelph.Controllers
         // GET: Languages/Create
         public IActionResult Create()
         {
-            //return View();
             LanguageCreateViewModel viewModel = new LanguageCreateViewModel();
             return PartialView("_CreatePartial", viewModel);
         }
@@ -83,7 +82,6 @@ namespace BookShelph.Controllers
                 CreateNotification("Contact saved!");
             }
 
-            //return View(viewModel);
             return PartialView("_CreatePartial", viewModel);
         }
 
@@ -166,9 +164,7 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
-            _fileUpload.DeleteFile(language.Image, uploadImagePath);
-
-            return View(language);
+            return PartialView("_DeletePartial", language);
         }
 
         // POST: Languages/Delete/5
@@ -177,6 +173,9 @@ namespace BookShelph.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var language = await _context.Languages.FindAsync(id);
+
+            _fileUpload.DeleteFile(language.Image, uploadImagePath);
+
             _context.Languages.Remove(language);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

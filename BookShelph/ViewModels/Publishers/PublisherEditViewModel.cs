@@ -6,10 +6,12 @@ namespace BookShelph.ViewModels.Publishers
     public class PublisherEditViewModel : EditViewModelBase
     {
         public PublisherEditViewModel() : base() { }
+
         public long Id { get; set; }
 
         public string ExistingImage { get; set; }
 
+        [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
         [Required]
         public string Name { get; set; }

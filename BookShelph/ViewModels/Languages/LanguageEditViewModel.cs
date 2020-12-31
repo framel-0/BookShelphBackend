@@ -10,7 +10,7 @@ namespace BookShelph.ViewModels.Languages
 
         public string ExistingImage { get; set; }
 
-
+        [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
         [Required]
         public string Name { get; set; }

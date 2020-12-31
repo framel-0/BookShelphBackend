@@ -172,9 +172,7 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
-            _fileUpload.DeleteFile(narrator.Image, uploadImagePath);
-
-            return View(narrator);
+            return PartialView("_DeletePartial", narrator);
         }
 
         // POST: Narrators/Delete/5
@@ -183,6 +181,9 @@ namespace BookShelph.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var narrator = await _context.Narrators.FindAsync(id);
+
+            _fileUpload.DeleteFile(narrator.Image, uploadImagePath);
+
             _context.Narrators.Remove(narrator);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

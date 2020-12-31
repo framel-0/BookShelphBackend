@@ -160,9 +160,7 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
-            _fileUpload.DeleteFile(publisher.Image, uploadImagePath);
-
-            return View(publisher);
+            return PartialView("_DeletePartial", publisher);
         }
 
         // POST: Publishers/Delete/5
@@ -171,6 +169,9 @@ namespace BookShelph.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var publisher = await _context.Publishers.FindAsync(id);
+
+            _fileUpload.DeleteFile(publisher.Image, uploadImagePath);
+
             _context.Publishers.Remove(publisher);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

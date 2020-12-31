@@ -10,10 +10,15 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form enctype="multipart/form-data" method="post">
+        <form enctype="multipart/form-data" method="post" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="ExistingCoverImage" />
+            <div class="flex-shrink-0 mr-7">
+                <div class="symbol symbol-140 symbol-lg-140">
+                    <img alt="Pic" src=@Url.Content("~/uploads/book/images/" + Model.ExistingCoverImage) />
+                </div>
+            </div>
             <div class="form-group m-form__group">
                 <label asp-for="CoverImageFile" class="control-label">
                 </label>

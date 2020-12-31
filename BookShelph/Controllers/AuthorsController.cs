@@ -168,20 +168,21 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
-            _fileUpload.DeleteFile(author.Image, uploadImagePath);
-
             return PartialView("_DeletePartial", author);
         }
 
         // POST: Authors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
+        public async Task DeleteConfirmed(long id)
         {
             var author = await _context.Authors.FindAsync(id);
+
+            _fileUpload.DeleteFile(author.Image, uploadImagePath);
+
             _context.Authors.Remove(author);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //return RedirectToAction(nameof(Index));
         }
 
         private bool AuthorExists(long id)

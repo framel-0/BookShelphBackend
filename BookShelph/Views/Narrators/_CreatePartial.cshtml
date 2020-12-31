@@ -1,7 +1,7 @@
 ﻿@model BookShelph.ViewModels.Narrators.NarratorCreateViewModel
 <!-- Modal-->
 <div class="modal fade" id="add-narrator" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
 
             <div class="modal-header">
@@ -14,51 +14,83 @@
                 <form enctype="multipart/form-data" method="post" asp-action="Create">
                     <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group m-form__group">
-                        <label asp-for="ImageFile" class="control-label">
-                        </label>
-                        <div></div>
-                        <div class="custom-file">
-                            <input asp-for="ImageFile" type="file" class="form-control custom-file-input" id="image">
-                            <label class="custom-file-label" for="customFile">
-                                Choose Image
-                            </label>
+                    <div class="form-group row">
+                        <div class="col-lg-">
+                            <div class="form-group m-form__group">
+                                <label asp-for="ImageFile" class="control-label">
+                                </label>
+                                <div></div>
+                                <div class="custom-file">
+                                    <input asp-for="ImageFile" type="file" class="form-control custom-file-input" id="image">
+                                    <label class="custom-file-label" for="customFile">
+                                        Choose Image
+                                    </label>
+                                </div>
+                                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                            </div>
                         </div>
-                        <span asp-validation-for="ImageFile" class="text-danger"></span>
+                        <div class="col-lg-6">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="FirstName" class="control-label"></label>
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
+
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="FirstName" class="control-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="LastName" class="control-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="LastName" class="control-label"></label>
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="OtherName" class="control-label"></label>
+                                <input asp-for="OtherName" class="form-control" />
+                                <span asp-validation-for="OtherName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="GenderId" class="control-label"></label>
+                                <select asp-for="GenderId" class="form-control" asp-items="ViewBag.GenderId"></select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="OtherName" class="control-label"></label>
-                        <input asp-for="OtherName" class="form-control" />
-                        <span asp-validation-for="OtherName" class="text-danger"></span>
+
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="EmailAddress" class="control-label"></label>
+                                <input asp-for="EmailAddress" class="form-control" />
+                                <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber" class="control-label"></label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="GenderId" class="control-label"></label>
-                        <select asp-for="GenderId" class="form-control" asp-items="ViewBag.GenderId"></select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="EmailAddress" class="control-label"></label>
-                        <input asp-for="EmailAddress" class="form-control" />
-                        <span asp-validation-for="EmailAddress" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PhoneNumber" class="control-label"></label>
-                        <input asp-for="PhoneNumber" class="form-control" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="HouseAddress" class="control-label"></label>
-                        <input asp-for="HouseAddress" class="form-control" />
-                        <span asp-validation-for="HouseAddress" class="text-danger"></span>
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label asp-for="HouseAddress" class="control-label"></label>
+                                <input asp-for="HouseAddress" class="form-control" />
+                                <span asp-validation-for="HouseAddress" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                        </div>
                     </div>
 
                 </form>

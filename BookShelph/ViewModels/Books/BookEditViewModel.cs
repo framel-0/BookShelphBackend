@@ -19,6 +19,8 @@ namespace BookShelph.ViewModels.Books
         [Required]
         public string Title { get; set; }
 
+        [Required]
+        [StringLength(450, MinimumLength = 50, ErrorMessage = "Summary cannot be less than 50 or longer than 450  characters.")]
         [DataType(DataType.MultilineText)]
         public string Summary { get; set; }
 

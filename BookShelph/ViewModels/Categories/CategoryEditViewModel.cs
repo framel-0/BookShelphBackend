@@ -9,6 +9,7 @@ namespace BookShelph.ViewModels.Categories
         public int Id { get; set; }
         public string ExistingImage { get; set; }
 
+        [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
         [Required]
         public string Name { get; set; }

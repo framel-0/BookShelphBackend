@@ -30,9 +30,6 @@
                     @Html.DisplayFor(modelItem => item.IsActive)
                 </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsActive)
-                </td>
                 <td nowrap="nowrap">
                     <button type="button" class="btn btn-transparent-warning font-weight-bold mr-2 btn-sm" data-toggle="ajax-modal" data-target="#edit-publisher" data-url="@Url.Action("Edit", "Publishers", new { id = @item.Id})">
                         Edit

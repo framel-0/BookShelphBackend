@@ -27,14 +27,20 @@ namespace BookShelph.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            var bookShelphDbContext = _context.Books
+            var books = await _context.Books
                 .Include(b => b.Audio)
                 .Include(b => b.Author)
                 .Include(b => b.Category)
                 .Include(b => b.Language)
                 .Include(b => b.Narrator)
-                .Include(b => b.Publisher);
-            return View(await bookShelphDbContext.ToListAsync());
+                .Include(b => b.Publisher).ToListAsync();
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return PartialView("_TablePartial", books);
+            }
+
+            return View(books);
         }
 
         // GET: Books/Details/5
@@ -94,7 +100,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ExistingCoverImage,CoverImageFile,Title,Description,ReleaseDate,CategoryId,PublisherId,AuthorId,LanguageId,NarratorId,AudioId")] BookCreateViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,ExistingCoverImage,CoverImageFile,Title,Summary,ReleaseDate,CategoryId,PublisherId,AuthorId,LanguageId,NarratorId,AudioId")] BookCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -174,7 +180,7 @@ namespace BookShelph.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,CoverImage,Title,Description,ReleaseDate,CategoryId,PublisherId,AuthorId,LanguageId,NarratorId,AudioId,IsActive")] BookEditViewModel viewModel)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,CoverImage,Title,Summary,ReleaseDate,CategoryId,PublisherId,AuthorId,LanguageId,NarratorId,AudioId,IsActive")] BookEditViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -231,6 +237,7 @@ namespace BookShelph.Controllers
             ViewData["LanguageId"] = new SelectList(_context.Languages, "Id", "Name");
             ViewData["NarratorId"] = new SelectList(narrators, "Id", "FullName");
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
+
             return PartialView("_EditPartial", viewModel);
         }
 
@@ -255,20 +262,21 @@ namespace BookShelph.Controllers
                 return NotFound();
             }
 
-            _fileUpload.DeleteFile(book.CoverImage, uploadImagePath);
-
-            return View(book);
+            return PartialView("_DeletePartial", book);
         }
 
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
+        public async Task DeleteConfirmed(long id)
         {
             var book = await _context.Books.FindAsync(id);
+
+            _fileUpload.DeleteFile(book.CoverImage, uploadImagePath);
+
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //return RedirectToAction(nameof(Index));
         }
 
         private bool BookExists(long id)

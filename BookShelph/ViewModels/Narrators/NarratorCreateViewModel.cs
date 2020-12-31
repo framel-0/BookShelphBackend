@@ -29,6 +29,7 @@ namespace BookShelph.ViewModels.Narrators
 
         [Required]
         [DataType(DataType.EmailAddress)]
+        [Display(Name = "Email Address")]
         public string EmailAddress { get; set; }
 
         [Required]
@@ -36,6 +37,7 @@ namespace BookShelph.ViewModels.Narrators
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
 
+        [Display(Name = "House Address")]
         public string HouseAddress { get; set; }
     }
 }

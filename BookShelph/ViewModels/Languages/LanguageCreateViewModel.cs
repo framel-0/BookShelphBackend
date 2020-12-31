@@ -7,6 +7,7 @@ namespace BookShelph.ViewModels.Languages
     {
         public LanguageCreateViewModel() : base() { }
         [Required]
+        [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
         [Required]
         public string Name { get; set; }
